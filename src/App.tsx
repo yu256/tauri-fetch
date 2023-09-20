@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { Prism } from "react-syntax-highlighter";
-import { base16AteliersulphurpoolLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { writeText } from "@tauri-apps/api/clipboard";
+import RenderJson from "./RenderJson.tsx";
 
 type Arguments = {
   method: string;
@@ -45,11 +44,7 @@ export default function App() {
       {res && (
         <>
           <button onClick={() => writeText(res)}>クリップボードにコピー</button>
-          <div className="m-5 rounded-lg overflow-clip">
-            <Prism language="json" style={base16AteliersulphurpoolLight}>
-              {JSON.stringify(JSON.parse(res), null, 2)}
-            </Prism>
-          </div>
+          <RenderJson json={res} />
         </>
       )}
     </div>
