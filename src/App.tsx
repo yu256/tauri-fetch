@@ -1,32 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { writeText } from "@tauri-apps/api/clipboard";
 import RenderJson from "./RenderJson.tsx";
 
-type Arguments = {
-  method: string;
-  target: string;
-  body?: string;
-  headers: Map<string, string>; // todo
-};
+const args = ["method", "target", "body"] as const satisfies readonly string[];
 
-const args = ["method", "target", "body"] as const;
-
-const argValue: Arguments = {
-  method: "",
-  target: "",
-  headers: new Map(),
-};
-
-export default function App() {
+export default function () {
   const [res, setRes] = useState("");
+  const [argValue, setArgValue] = useState({
+    method: "",
+    target: "",
+    body: "",
+  });
+
+  useEffect(() => {
+    invoke<typeof argValue>("restore").then(setArgValue);
+  }, []);
 
   return (
     <div className="text-center mt-10">
       {args.map(arg => (
         <input
           className="m-3"
-          onChange={e => (argValue[arg] = e.currentTarget.value)}
+          value={argValue[arg]}
+          key={arg}
+          onChange={e => {
+            argValue[arg] = e.currentTarget.value;
+          }}
           placeholder={arg}
         />
       ))}
