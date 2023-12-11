@@ -22,7 +22,7 @@ export default function () {
       {args.map(arg => (
         <input
           className="m-3"
-          value={argValue[arg]}
+          defaultValue={argValue[arg]}
           key={arg}
           onChange={e => {
             argValue[arg] = e.currentTarget.value;
