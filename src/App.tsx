@@ -3,12 +3,20 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { writeText } from "@tauri-apps/api/clipboard";
 import RenderJson from "./RenderJson.tsx";
 
+const methods = [
+  "GET",
+  "HEAD",
+  "POST",
+  "PUT",
+  "DELETE",
+] as const satisfies string[];
+
 const args = ["method", "target", "body"] as const satisfies readonly string[];
 
 export default function () {
   const [res, setRes] = useState("");
   const [argValue, setArgValue] = useState({
-    method: "",
+    method: "POST" as (typeof methods)[number],
     target: "",
     body: "",
   });
@@ -19,17 +27,32 @@ export default function () {
 
   return (
     <div className="text-center mt-10">
-      {args.map(arg => (
-        <input
-          className="m-3"
-          defaultValue={argValue[arg]}
-          key={arg}
-          onChange={e => {
-            argValue[arg] = e.currentTarget.value;
-          }}
-          placeholder={arg}
-        />
-      ))}
+      {args.map(arg =>
+        arg === "method" ? (
+          <select
+            className="m-3"
+            defaultValue={argValue[arg]}
+            key={arg}
+            onChange={e => {
+              argValue[arg] = e.target.value as (typeof methods)[number];
+            }}
+          >
+            {methods.map(method => (
+              <option value={method}>{method}</option>
+            ))}
+          </select>
+        ) : (
+          <input
+            className="m-3"
+            defaultValue={argValue[arg]}
+            key={arg}
+            onChange={e => {
+              argValue[arg] = e.currentTarget.value;
+            }}
+            placeholder={arg}
+          />
+        )
+      )}
       <button
         className="m-3"
         onClick={() =>

@@ -10,12 +10,22 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::sync::LazyLock;
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize)]
 struct Arguments {
     method: String,
     target: String,
     body: String,
     // headers: HashMap<String, String>,
+}
+
+impl Default for Arguments {
+    fn default() -> Self {
+        Self {
+            method: Default::default(),
+            target: Default::default(),
+            body: "POST".into(),
+        }
+    }
 }
 
 pub(crate) const APP_NAME: &str = "tauri-fetch";
