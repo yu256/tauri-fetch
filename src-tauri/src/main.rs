@@ -65,13 +65,19 @@ fn request(args: Arguments) -> Result<String> {
     //     request = request.set(key, value);
     // }
 
-    let res = if args.body.is_empty() {
+    match if args.body.is_empty() {
         request.call()
     } else {
         request.send_string(&args.body)
-    };
-
-    res?.into_string().map_err(From::from)
+    } {
+        Ok(ok) => ok,
+        Err(ureq::Error::Status(_, res)) => {
+            return Err(anyhow::anyhow!("{{\"error\": {:?}}}", res.into_string()?))
+        }
+        Err(e) => return Err(e.into()),
+    }
+    .into_string()
+    .map_err(From::from)
 }
 
 const PATH: &'static str = "temp";
